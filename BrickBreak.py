@@ -113,8 +113,11 @@ def game():
             # create release trail
             while county > bally:
                 pygame.draw.circle(dis, white, [countx, county], 2)
-                countx -= slope * math.cos(math.atan(slope)) * 20
-                county -= slope * math.sin(math.atan(slope)) * 20
+                if slope != math.inf:
+                    countx -= slope / abs(slope) * math.cos(math.atan(slope)) * 20
+                    county -= slope / abs(slope) * math.sin(math.atan(slope)) * 20
+                else:
+                    county -= 10
 
         if bally == 450:  # ball on the release line
             released = False
