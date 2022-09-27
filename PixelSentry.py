@@ -168,6 +168,7 @@ def game():
             # pixels properties
             pixels = []
             last_attack = time.time()
+            total_pixels = 0
 
             # shots properties
             shots = []
