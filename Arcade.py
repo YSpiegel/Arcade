@@ -10,20 +10,6 @@ dis.set_colorkey((255, 255, 255))
 pygame.font.init()
 
 
-def empty_rect(coords, length, height, thickness):
-    """
-    Creates a rectangular frame
-    :param coords: positions for the rectangle
-    :param length:
-    :param height:
-    :param thickness: of the frame
-    :return: None
-    """
-    pygame.draw.rect(dis, (0, 0, 0), [coords[0], coords[1], length, height])
-    pygame.draw.rect(dis, (255, 255, 255),
-                     [coords[0] + thickness, coords[1] + thickness, length - 2 * thickness, height - 2 * thickness])
-
-
 def button(coords, length, height, thickness, msg):
     """
     Set a frame and add the fitting text
@@ -34,7 +20,7 @@ def button(coords, length, height, thickness, msg):
     :param msg: to be presented on the button
     :return: None
     """
-    empty_rect(coords, length, height, thickness)
+    pygame.draw.rect(dis, (0, 0, 0), [coords[0], coords[1], length, height], width=thickness)
     dis.blit(get_entry_text(msg, 30), (coords[0] + 10, coords[1] + 10))
 
 
