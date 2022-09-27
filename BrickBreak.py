@@ -69,6 +69,25 @@ def game():
     addrow = False
     addrowflag = False
 
+    def bricks_falling():
+
+        bricks_fell = False
+        acceleration = 0
+        while not bricks_fell:
+            for brick in bricks[-1]:
+                pygame.draw.rect(dis, (0, 255, 0), [brick[0], brick[1], 50, 20])
+                if brick[0] != -100:
+                    brick[1] += 0.01 + 0.5 * acceleration
+                    if brick[1] > 600:
+                        bricks_fell = True
+                pygame.draw.rect(dis, white, [brick[0], brick[1], 50, 20])  # draw brick
+
+            for x in range(15):  # draw release line
+                pygame.draw.rect(dis, white, [80 * x, 450, 40, 2])
+
+            acceleration += 0.01
+            pygame.display.update()
+
     while not game_over:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -187,6 +206,7 @@ def game():
                 bricks.remove(row)
 
             if end_round:
+                bricks_falling()
                 game_over = end_of_round()
 
                 bricks = create_bricks()
