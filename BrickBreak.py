@@ -13,7 +13,6 @@ white = (255, 255, 255)
 
 def get_entry_text(msg, fontsize):
     """
-
     Forms a rendered version of a message
     :param msg:
     :param fontsize:
@@ -80,10 +79,6 @@ def game():
                     if addrowflag:
                         addrow = True
                     addrowflag = not addrowflag
-
-                for row in bricks:
-                    print(row)
-                print()
 
         dis.fill((0, 255, 0))
         for x in range(15):  # draw release line
