@@ -12,6 +12,17 @@ black = (0, 0, 0)
 pygame.font.init()
 
 
+def get_entry_text(msg, fontsize):
+    """
+    Forms a rendered version of a message
+    :param msg:
+    :param fontsize:
+    :return: None
+    """
+    textfont = pygame.font.SysFont('Comic Sans MS', fontsize)
+    return textfont.render(msg, False, (0, 0, 0))
+
+
 def get_angle(pos1, pos2):
     """
     Calculate the angle between two positions
@@ -34,28 +45,32 @@ def get_angle(pos1, pos2):
         return math.pi + angle
 
 
+def disposition(point, angle, radius):
+    return [point[0] + math.cos(angle) * radius, point[1] - math.sin(angle) * radius]
+
+
 class Mirror:
 
     def __init__(self, center):
         self.center = center
         self.angle = 0
-        self.start = [center[0] + math.cos(self.angle) * 25, center[1] - math.sin(self.angle) * 25]
-        self.end = [center[0] + math.cos(math.pi + self.angle) * 25, center[1] - math.sin(math.pi + self.angle) * 25]
+        self.start = disposition(center, self.angle, 25)
+        self.end = disposition(center, math.pi + self.angle, 25)
         self.clicked = False
 
     def draw(self):
         pygame.draw.line(dis, silver, self.start, self.end, width=6)
         pygame.draw.circle(dis, black, self.center, 4)
-        pygame.draw.circle(dis, red, self.start, 2)
 
     def movable(self, mouse_pos):
-        return dist(mouse_pos, self.center) <= 5
+        return dist(mouse_pos, self.center) <= 8
 
     def update(self):
-        self.start = [self.center[0] + math.cos(self.angle) * 25,
-                      self.center[1] - math.sin(self.angle) * 25]
-        self.end = [self.center[0] + math.cos(math.pi + self.angle) * 25,
-                    self.center[1] - math.sin(math.pi + self.angle) * 25]
+        self.start = disposition(self.center, self.angle, 25)
+        self.end = disposition(self.center, math.pi + self.angle, 25)
+
+    def in_contact(self, point):
+        return abs(dist(point, self.start) + dist(point, self.end) - dist(self.start, self.end)) <= 1
 
 def dist(p1, p2):
     return math.sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)
@@ -107,8 +122,8 @@ def draw_laser(laser_trail):
 def game():
     game_over = False
 
-    laser_trail = create_laser()
-    mirrors = [Mirror(point) for i, point in enumerate(laser_trail) if 0 < i < len(laser_trail) - 1]
+    target_laser_trail = create_laser()
+    mirrors = [Mirror(point) for i, point in enumerate(target_laser_trail) if 0 < i < len(target_laser_trail) - 1]
 
 
     while not game_over:
@@ -127,11 +142,33 @@ def game():
             if mirror.clicked:
                 mirror.angle = get_angle(mirror.center, pygame.mouse.get_pos()) - math.pi / 2
 
+        current_laser = [target_laser_trail[0], target_laser_trail[0]]
+        laser_angle = get_angle(target_laser_trail[0], target_laser_trail[1])
+        while current_laser[-1][0] > 0:
+
+            # draw_laser(current_laser)
+            # for mirror in mirrors:
+            #     mirror.update()
+            #     mirror.draw()
+            # pygame.display.update()
+
+            if not 0 <= current_laser[-1][1] <= 600:
+                laser_angle = math.pi - laser_angle
+                current_laser.append(current_laser[-1])
+            for mirror in mirrors:
+                if mirror.in_contact(current_laser[-1]):
+                    laser_angle = mirror.angle - laser_angle
+                    current_laser.append(current_laser[-1])
+
+            current_laser[-1] = disposition(current_laser[-1], laser_angle, 1)
+
         dis.fill(yellow)
-        draw_laser(laser_trail)
+        draw_laser(current_laser)
+
         for mirror in mirrors:
             mirror.update()
             mirror.draw()
+            dis.blit(get_entry_text(str(mirror.angle)[:4], 20), mirror.center)
         pygame.display.update()
 
 game()
