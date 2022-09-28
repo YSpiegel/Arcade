@@ -6,9 +6,29 @@ import time
 dis = pygame.display.set_mode((600, 600))
 pygame.display.set_caption("Pong by YS")
 dis.set_colorkey((0, 0, 255))
+black = (0, 0, 0)
 
 pygame.font.init()
 
+class Ball:
+    def __init__(self):
+        self.ballx = 300
+        self.bally = 300
+        self.ball_angle = random.random()
+        self.modspeed = 0.3
+        self.balltrail = [[self.ballx, self.bally]]
+
+        self.boundstimer = 0
+        self.rackettimer = 0
+
+    def change_modspeed(self):
+        self.modspeed *= - 1
+
+    def mod_vectors(self):
+        self.ballxmod = self.modspeed * math.cos(self.ball_angle)
+        self.ballymod = self.modspeed * math.sin(self.ball_angle)
+        self.ballx += self.ballxmod
+        self.bally -= self.ballymod
 
 def get_entry_text(msg, fontsize):
     """
@@ -55,26 +75,58 @@ def game():
 
     white = (255, 255, 255)
 
-    racket1 = 300  # right racket
-    racket2 = 300  # left racket
+    racket1 = 260  # right racket
+    racket2 = 260  # left racket
     racket1mod = 0
     racket2mod = 0
 
-    ballx = 300
-    bally = 300
-    ball_angle = random.random()
-    modspeed = 0.4
-    balltrail = [[ballx, bally]]
+    balls = []
 
     points = 0
 
-    boundstimer = 0
-    rackettimer = 0
 
     waiting = True
     wait_time = time.time()
 
     while not game_over:
+
+        # mode selection screen
+        while len(balls) == 0 and not game_over:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    game_over = True
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    x = pygame.mouse.get_pos()[0]
+                    y = pygame.mouse.get_pos()[1]
+                    if 200 <= y <= 320:
+                        if 60 <= x <= 180:
+                            balls = [Ball()]
+                        elif 240 <= x <= 360:
+                            balls = [Ball(), Ball()]
+                        elif 420 <= x <= 580:
+                            balls = [Ball(), Ball(), Ball()]
+
+            dis.fill((0, 0, 255))
+            dis.blit(get_entry_text("Choose gamemode", 50), [90, 50])
+
+            # draw one ball button
+            pygame.draw.rect(dis, black, [60, 200, 120, 120], width=10)
+            pygame.draw.circle(dis, white, [120, 260], 16)
+
+            # draw two balls trail button
+            pygame.draw.rect(dis, black, [240, 200, 120, 120], width=10)
+            pygame.draw.circle(dis, white, [280, 260], 16)
+            pygame.draw.circle(dis, white, [320, 260], 16)
+
+            # draw three balls button
+            pygame.draw.rect(dis, black, [420, 200, 120, 120], width=10)
+            pygame.draw.circle(dis, white, [480, 240], 16)
+            pygame.draw.circle(dis, white, [455, 280], 16)
+            pygame.draw.circle(dis, white, [505, 280], 16)
+
+            pygame.display.update()
+
+            wait_time = time.time()
 
         if waiting:
             wait_delta = time.time() - wait_time
@@ -87,11 +139,12 @@ def game():
 
             dis.fill((0, 0, 255))
 
-            for i in range(1, 200):  # draw a trail
-                if i < len(balltrail):
-                    pygame.draw.circle(dis, (225, 225, 225), balltrail[i], 10 - 0.05 * i)
+            for ball in balls:
+                for i in range(1, 200):  # draw a trail
+                    if i < len(ball.balltrail):
+                        pygame.draw.circle(dis, (225, 225, 225), ball.balltrail[i], 10 - 0.05 * i)
 
-            pygame.draw.circle(dis, white, [ballx, bally], 10)  # draw the ball
+                pygame.draw.circle(dis, white, [ball.ballx, ball.bally], 10)  # draw the ball
 
             # draw rackets
             pygame.draw.rect(dis, white, [550, racket1, 20, 80])
@@ -141,70 +194,66 @@ def game():
             else:  # in bounds
                 racket2 += racket2mod
 
-            if (rackettimer > 2500) and abs(modspeed) == 0.4:  # accelerate if takes long
-                modspeed *= 4
-            if (ballx <= 150 or ballx >= 450) and abs(modspeed) == 1.6:  # decelerate if getting close to a racket
-                modspeed /= 4
+            # handle balls
+            for i, ball in enumerate(balls):
+                # contact with racket 2 or 1
+                if ball.rackettimer >= 200 and ((30 <= ball.ballx <= 50 and racket2 <= ball.bally <= racket2 + 80) or
+                                           (
+                                                   550 <= ball.ballx <= 570 and racket1 <= ball.bally <= racket1 + 80)):
+                    ball.ball_angle = modifyangle(ball.ball_angle)
+                    ball.change_modspeed()  # change ball movement direction
+                    points += 1
+                    ball.rackettimer = 0
+                ball.rackettimer += 1  # time since hit a racket
 
-            # contact with racket 2 or 1
-            if rackettimer >= 200 and ((30 <= ballx <= 50 and racket2 <= bally <= racket2 + 80) or
-                                       (
-                                               550 <= ballx <= 570 and racket1 <= bally <= racket1 + 80)):
-                ball_angle = modifyangle(ball_angle)
-                modspeed = -modspeed  # change ball movement direction
-                points += 1
-                rackettimer = 0
-            rackettimer += 1  # time since hit a racket
+                if ball.boundstimer >= 150 and (ball.bally >= 600 or ball.bally <= 0):  # contact with edges
+                    ball.ball_angle = math.pi - ball.ball_angle
+                    ball.change_modspeed()
+                    ball.boundstimer = 0
+                ball.boundstimer += 1  # time since hit a border
 
-            if boundstimer >= 150 and (bally >= 600 or bally <= 0):  # contact with edges
-                ball_angle = math.pi - ball_angle
-                modspeed = -modspeed
-                boundstimer = 0
-            boundstimer += 1  # time since hit a border
+                if ball.balltrail[-1][0] < -10 or ball.balltrail[-1][0] > 610:
+                    game_over = end_of_round()
+                    balls = [Ball() for ball in balls]
 
-            if balltrail[-1][0] < -10 or balltrail[-1][0] > 610:
-                game_over = end_of_round()
-                racket1 = 300  # right racket
-                racket2 = 300  # left racket
-                racket1mod = 0
-                racket2mod = 0
+                    points = 0
+                    racket1 = 260  # right racket
+                    racket2 = 260  # left racket
 
-                ballx = 300
-                bally = 300
-                ball_angle = random.random()
-                modspeed = 0.4
+                    waiting = True
+                    wait_time = time.time()
 
-                points = 0
+                    break
 
-                balltrail = [[ballx, bally]]
+                wait_delta = time.time() - wait_time
+                if wait_delta > i + 3:
+                    ball.mod_vectors()
+                # ball.ballxmod = ball.modspeed * math.cos(ball.ball_angle)  # modifying ball's vectors
+                # ball.ballymod = ball.modspeed * math.sin(ball.ball_angle)
+                # ball.ballx += ball.ballxmod
+                # ball.bally -= ball.ballymod
 
-                waiting = True
-                wait_time = time.time()
-
-            ballxmod = modspeed * math.cos(ball_angle)  # modifying ball's vectors
-            ballymod = modspeed * math.sin(ball_angle)
-            ballx += ballxmod
-            bally -= ballymod
-
-            balltrail = [[ballx, bally]] + balltrail  # update trail
-            if len(balltrail) > 150:
-                balltrail.remove(balltrail[-1])
+                ball.balltrail = [[ball.ballx, ball.bally]] + ball.balltrail  # update trail
+                if len(ball.balltrail) > 150:
+                    ball.balltrail.remove(ball.balltrail[-1])
 
             dis.fill((0, 0, 255))
+            textfont = pygame.font.SysFont('Comic Sans MS', 30)
+            score = textfont.render("Score: " + str(points), False, (0, 0, 0))
+            dis.blit(score, (245, 50))
 
             # draw rackets
             pygame.draw.rect(dis, white, [550, racket1, 20, 80])
             pygame.draw.rect(dis, white, [30, racket2, 20, 80])
 
-            for i in range(1, 150):  # draw a trail
-                if i < len(balltrail):
-                    pygame.draw.circle(dis, (225, 225, 225), balltrail[i], 10 - 0.05 * i)
+            # draw balls
+            for ball in balls:
+                for i in range(1, 150):  # draw a trail
+                    if i < len(ball.balltrail):
+                        pygame.draw.circle(dis, (225, 225, 225), ball.balltrail[i], 10 - 0.05 * i)
 
-            pygame.draw.circle(dis, white, [ballx, bally], 10)  # draw the ball
+                pygame.draw.circle(dis, white, [ball.ballx, ball.bally], 10)  # draw the ball
 
-            textfont = pygame.font.SysFont('Comic Sans MS', 30)
-            score = textfont.render("Score: " + str(points), False, (0, 0, 0))
-            dis.blit(score, (245, 50))
 
             pygame.display.update()
 
