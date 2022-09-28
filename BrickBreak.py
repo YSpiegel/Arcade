@@ -68,11 +68,11 @@ def shift_location(loc, size, angle, radius):
 
 
 def draw_arrow(bottom, size, angle):
-    head1 = shift_location(bottom, size, angle, 2 * size)
-    head2 = shift_location(bottom, size, angle, 1 * size)
-    side_a = shift_location(bottom, size, angle - math.pi / (size * 1), 1 * size)
-    side_b = shift_location(bottom, size, angle + math.pi / (size * 1), 1 * size)
-    pygame.draw.line(dis, white, bottom, head2, width=2 * size)
+    head1 = shift_location(bottom, size, angle, 3 * size)
+    head2 = shift_location(bottom, size, angle, 2 * size)
+    side_a = shift_location(bottom, size, angle - math.pi / (size * 2.5), 2 * size)
+    side_b = shift_location(bottom, size, angle + math.pi / (size * 2.5), 2 * size)
+    pygame.draw.line(dis, white, bottom, head2, width=size)
     pygame.draw.polygon(dis, white, [head1, side_a, side_b])
 
 def game():
@@ -149,7 +149,7 @@ def game():
 
             # draw arrow button
             pygame.draw.rect(dis, black, [420, 200, 120, 120], width=10)
-            draw_arrow([480, 295], 6, math.pi * 1.5)
+            draw_arrow([480, 295], 5, math.pi * 1.5)
 
             pygame.display.update()
 
@@ -266,7 +266,7 @@ def game():
                 if arrow_angle >= math.pi * 31 / 16 or arrow_angle <= math.pi + math.pi / 16:
                     arrow_angle_mod *= - 1
                 slope = math.tan(arrow_angle)
-                draw_arrow([ballx, bally], 5, arrow_angle)
+                draw_arrow([ballx, bally], 4, arrow_angle)
 
 
 
