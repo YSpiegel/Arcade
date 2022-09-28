@@ -214,7 +214,7 @@ def game():
 
                 if ball.balltrail[-1][0] < -10 or ball.balltrail[-1][0] > 610:
                     game_over = end_of_round()
-                    balls = [Ball() for ball in balls]
+                    balls = []
 
                     points = 0
                     racket1 = 260  # right racket
