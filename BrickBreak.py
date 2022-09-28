@@ -57,10 +57,10 @@ def draw_target(center, size):
     y = center[1]
     pygame.draw.circle(dis, black, center, 8 * size, width=4 * size)
     pygame.draw.circle(dis, black, center, 16 * size, width=4 * size)
-    pygame.draw.line(dis, black, [x-(20*size), y], [x-(5*size), y], width=size)
-    pygame.draw.line(dis, black, [x+(5*size), y], [x+(20*size), y], width=size)
-    pygame.draw.line(dis, black, [x, y-(20*size)], [x, y-(5*size)], width=size)
-    pygame.draw.line(dis, black, [x, y+(5*size)], [x, y+(20*size)], width=size)
+    pygame.draw.line(dis, black, [x - (20 * size), y], [x - (5 * size), y], width=size)
+    pygame.draw.line(dis, black, [x + (5 * size), y], [x + (20 * size), y], width=size)
+    pygame.draw.line(dis, black, [x, y - (20 * size)], [x, y - (5 * size)], width=size)
+    pygame.draw.line(dis, black, [x, y + (5 * size)], [x, y + (20 * size)], width=size)
 
 
 def shift_location(loc, size, angle, radius):
@@ -74,6 +74,7 @@ def draw_arrow(bottom, size, angle):
     side_b = shift_location(bottom, size, angle + math.pi / (size * 2.5), 2 * size)
     pygame.draw.line(dis, white, bottom, head2, width=size)
     pygame.draw.polygon(dis, white, [head1, side_a, side_b])
+
 
 def game():
     game_over = False
@@ -134,7 +135,6 @@ def game():
                         elif 420 <= x <= 580:
                             mode = 2
 
-
             dis.fill((0, 255, 0))
             dis.blit(get_entry_text("Choose gamemode", 50), [90, 50])
 
@@ -160,19 +160,13 @@ def game():
             if event.type == pygame.QUIT:
                 game_over = True
             if event.type == pygame.MOUSEBUTTONDOWN and \
-                    (mode == 1 and my > 450 or mode == 0 and my < 450):  # clicking releases the ball
+                    (mode == 1 and my > 450 or mode == 0 and my < 450 or mode == 2):  # clicking releases the ball
                 released = True
                 if bally == 450:  # every two turns add a row
                     if addrowflag:
                         addrow = True
                     addrowflag = not addrowflag
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE and mode == 2:
-                    released = True
-                    if bally == 450:  # every two turns add a row
-                        if addrowflag:
-                            addrow = True
-                        addrowflag = not addrowflag
+                    arrow_angle_mod = math.pi / 1024
 
         dis.fill((0, 255, 0))
         for x in range(15):  # draw release line
@@ -264,13 +258,12 @@ def game():
             else:
                 arrow_angle += arrow_angle_mod
                 if arrow_angle >= math.pi * 31 / 16 or arrow_angle <= math.pi + math.pi / 16:
-                    arrow_angle_mod *= - 1
+                    if math.pi / 1024 <= abs(arrow_angle_mod) <= math.pi / 64:
+                        arrow_angle_mod *= -1.3
+                    else:
+                        arrow_angle_mod *= -1
                 slope = math.tan(arrow_angle)
                 draw_arrow([ballx, bally], 4, arrow_angle)
-
-
-
-
 
         if bally == 450:  # ball on the release line
             released = False
