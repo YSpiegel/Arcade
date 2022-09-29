@@ -158,6 +158,9 @@ def game():
 
             pygame.display.update()
 
+        if game_over:
+            break
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 game_over = True
