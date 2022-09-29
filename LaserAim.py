@@ -68,8 +68,8 @@ class Mirror:
     def update(self):
         self.start = disposition(self.center, self.angle, 25)
         self.end = disposition(self.center, math.pi + self.angle, 25)
-        self.angle = self.angle if 0 <= self.angle <= math.pi else \
-        (self.angle + math.pi if self.angle < 0 else self.angle - math.pi)
+        # self.angle = self.angle if 0 <= self.angle <= math.pi else \
+        # (self.angle + math.pi if self.angle < 0 else self.angle - math.pi)
 
     def in_contact(self, point):
         return abs(dist(point, self.start) + dist(point, self.end) - dist(self.start, self.end)) <= 1
@@ -146,23 +146,26 @@ def game():
 
         current_laser = [target_laser_trail[0], target_laser_trail[0]]
         laser_angle = get_angle(target_laser_trail[0], target_laser_trail[1])
-        while current_laser[-1][0] > 0:
+        while current_laser[-1][0] > 0 and 0 <= current_laser[-1][0] <= 600:
 
-            draw_laser(current_laser)
-            for mirror in mirrors:
-                mirror.update()
-                mirror.draw()
-            pygame.display.update()
-            for mirror in mirrors:
-                if mirror.clicked:
-                    mirror.angle = get_angle(mirror.center, pygame.mouse.get_pos()) - math.pi / 2
+            # draw_laser(current_laser)
+            # for mirror in mirrors:
+            #     mirror.update()
+            #     mirror.draw()
+            # pygame.display.update()
+            # for mirror in mirrors:
+            #     if mirror.clicked:
+            #         mirror.angle = get_angle(mirror.center, pygame.mouse.get_pos()) - math.pi / 2
 
             if not 0 <= current_laser[-1][1] <= 600:
-                laser_angle = math.pi - laser_angle
+                laser_angle = math.pi + laser_angle
                 current_laser.append(current_laser[-1])
             for mirror in mirrors:
                 if mirror.in_contact(current_laser[-1]):
-                    laser_angle = mirror.angle - laser_angle
+                    if laser_angle - mirror.angle < math.pi:
+                        laser_angle = mirror.angle - laser_angle + math.pi / 2
+                    else:
+                        laser_angle = mirror.angle - laser_angle - math.pi / 2
                     current_laser.append(current_laser[-1])
 
             current_laser[-1] = disposition(current_laser[-1], laser_angle, 1)
