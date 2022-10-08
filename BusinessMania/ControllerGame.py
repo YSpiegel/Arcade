@@ -7,6 +7,7 @@ pygame.display.set_caption("ControllerGame by YS")
 dis.set_colorkey((255, 255, 255))
 black = (0, 0, 0)
 white = (255, 255, 255)
+light_gray = (235, 235, 235)
 pygame.font.init()
 
 game_over = False
@@ -62,6 +63,10 @@ class player:
     def draw(self):
         pygame.draw.circle(dis, black, self.pos, 5)
         pygame.draw.rect(dis, black, [self.pos[0] - 3, self.pos[1] + 5, 6, 15])
+        pygame.draw.polygon(dis, white, [[self.pos[0] - 3, self.pos[1] + 6], [self.pos[0] + 3, self.pos[1] + 6],
+                                         [self.pos[0], self.pos[1] + 10]])
+        pygame.draw.rect(dis, black, [self.pos[0] - 5, self.pos[1] - 5, 10, 2])
+        pygame.draw.circle(dis,black, [self.pos[0], self.pos[1] - 5], 3)
 
     def current_speed(self):
         return self.yv0 + self.y_dt() * self.ya * 4
@@ -127,7 +132,7 @@ program_start = time.time()
 
 while not game_over:
 
-    dis.fill(white)
+    dis.fill(light_gray)
 
     y_delta_time = player.y_dt() * 4
 
