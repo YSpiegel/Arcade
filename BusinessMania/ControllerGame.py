@@ -36,6 +36,8 @@ class player:
 
         self.falling = True
         self.jumping = False
+        self.can_move_right = True
+        self.can_move_left = True
 
     def change_x_movement(self, xv_mod):
         self.xv = xv_mod
@@ -114,8 +116,8 @@ def horizontal_collusion(hitbox1, hitbox2):
 
 player = player()
 #
-obstacles = [obstacle([320, 300], 50, 50), obstacle([200, 320], 100, 40), obstacle([0, 400], 600, 200),
-             obstacle([70, 360], 100, 20)]
+obstacles = [obstacle([0, 580], 600, 20), obstacle([0, 0], 600, 20),
+             obstacle([0, 0], 20, 600), obstacle([580, 0], 20, 600)]
 
 for _ in range(15):
     obstacles.append(obstacle([random.randint(0, 400), random.randint(0, 400)],
@@ -130,6 +132,8 @@ while not game_over:
     y_delta_time = player.y_dt() * 4
 
     player.falling = True
+    player.can_move_right = True
+    player.can_move_left = True
 
     for obs in obstacles:
 
@@ -145,9 +149,16 @@ while not game_over:
                     player.falling = False
                     player.jumping = False
         else:
-            if (horizontal_collusion(player.hitbox(), obs.hitbox) == obs.hitbox and player.xv == -100) or \
-                    (horizontal_collusion(player.hitbox(), obs.hitbox) == player.hitbox() and player.xv == 100):
-                player.change_x_movement(0)
+            if horizontal_collusion(player.hitbox(), obs.hitbox) == obs.hitbox:
+                player.can_move_left = False
+                if player.xv < 0:
+                    player.xt = time.time()
+                    player.x0 = player.pos[0]
+            if horizontal_collusion(player.hitbox(), obs.hitbox) == player.hitbox():
+                player.can_move_right = False
+                if player.xv > 0:
+                    player.xt = time.time()
+                    player.x0 = player.pos[0]
         # dis.blit(get_entry_text(" in " if in_vertically(player.hitbox(), obs.hitbox) else "not in", 30),
         #          [obs.pos[0], obs.pos[1] - 40])
         # dis.blit(get_entry_text(" col " if horizontal_collusion(player.hitbox(), obs.hitbox) else "not col", 30),
@@ -178,11 +189,9 @@ while not game_over:
         player.pos[1] = player.y0 + player.yv0 * y_delta_time + 0.5 * player.ya * (y_delta_time ** 2)
 
     if 0 <= player.pos[0] <= 600:
-        player.pos[0] = player.x0 + player.xv * player.x_dt()
-        if player.pos[0] < 0:
-            player.pos[0] = 0
-        if player.pos[0] > 600:
-            player.pos[0] = 600
+        if (player.xv > 0 and player.can_move_right) or (player.xv < 0 and player.can_move_left):
+            player.pos[0] = player.x0 + player.xv * player.x_dt()
+
     player.draw()
     for obs in obstacles:
         obs.draw()
