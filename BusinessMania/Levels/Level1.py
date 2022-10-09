@@ -2,9 +2,10 @@ import pygame
 import time
 import random
 import classes
+import functions
 
 dis = pygame.display.set_mode((600, 600))
-pygame.display.set_caption("ControllerGame by YS")
+pygame.display.set_caption("BusinessMania by YS")
 dis.set_colorkey((255, 255, 255))
 black = (0, 0, 0)
 white = (255, 255, 255)
@@ -15,56 +16,16 @@ pygame.font.init()
 game_over = False
 
 
-def in_vertically(hitbox1, hitbox2):
-    return hitbox2[0][0] - 5 <= hitbox1[0][0] < hitbox1[0][1] <= hitbox2[0][1] + 5
-
-
-def vertical_collusion(hitbox1, hitbox2):
-    """
-    Checks for a collusion
-    :param hitbox1:
-    :param hitbox2:
-    :return: The higher hitbox or none if there's no collusion
-    """
-
-    if hitbox1[0][0] <= hitbox2[0][0] <= hitbox1[0][1] or hitbox2[0][0] <= hitbox1[0][0] <= hitbox2[0][1]:
-        if hitbox1[1][0] <= hitbox2[1][0] <= hitbox1[1][1]:
-            return hitbox1
-        if hitbox2[1][0] <= hitbox1[1][0] <= hitbox2[1][1]:
-            return hitbox2
-    return 0
-
-
-def horizontal_collusion(hitbox1, hitbox2):
-    """
-        Checks for a collusion
-        :param hitbox1:
-        :param hitbox2:
-        :return: The left hitbox or none if there's no collusion
-        """
-
-    if hitbox1[1][0] <= hitbox2[1][0] + 1 <= hitbox1[1][1] or hitbox2[1][0] <= hitbox1[1][0] + 1 <= hitbox2[1][1]:
-        if hitbox1[0][0] <= hitbox2[0][0] <= hitbox1[0][1]:
-            return hitbox1
-        if hitbox2[0][0] <= hitbox1[0][0] <= hitbox2[0][1]:
-            return hitbox2
-    return 0
-
-
 player = classes.player(dis)
 
-obstacles = [classes.obstacle([0, 580, 600, 20], dis), classes.obstacle([0, 0, 600, 20], dis),
-             classes.obstacle([0, 0, 20, 600], dis), classes.obstacle([580, 0, 20, 600], dis),
+obs_list = [[0, 580, 600, 20], [0, 0, 600, 20], [0, 0, 20, 600], [580, 0, 20, 600],
 
-             classes.obstacle([280, 320, 40, 10], dis), classes.obstacle([310, 220, 10, 100], dis),
-             classes.obstacle([280, 280, 10, 40], dis), classes.obstacle([220, 280, 60, 10], dis),
-             classes.obstacle([170, 220, 10, 200], dis), classes.obstacle([170, 420, 100, 10], dis),
-             classes.obstacle([270, 380, 10, 50], dis), classes.obstacle([280, 380, 50, 10], dis),
-             classes.obstacle([170, 220, 120, 10], dis), classes.obstacle([330, 380, 10, 50], dis),
-             classes.obstacle([330, 420, 50, 10], dis), classes.obstacle([380, 420, 10, 50], dis),
-             classes.obstacle([380, 460, 50, 10], dis), classes.obstacle([430, 460, 10, 50], dis),
-             classes.obstacle([430, 500, 50, 10], dis), classes.obstacle([480, 500, 10, 50], dis),
-             classes.obstacle([480, 540, 50, 10], dis), classes.obstacle([530, 540, 10, 50], dis)]
+            [280, 320, 40, 10], [310, 220, 10, 100], [280, 280, 10, 40], [220, 280, 60, 10], [170, 220, 10, 200],
+            [170, 420, 100, 10], [170, 220, 10, 200], [280, 380, 50, 10], [170, 220, 120, 10], [330, 380, 10, 50],
+            [330, 420, 50, 10], [380, 420, 10, 50], [380, 460, 50, 10], [430, 460, 10, 50], [430, 500, 50, 10],
+            [480, 500, 10, 50], [480, 540, 50, 10], [530, 540, 10, 50]]
+
+obstacles = [classes.obstacle(rect, dis) for rect in obs_list]
 
 program_start = time.time()
 
@@ -82,22 +43,22 @@ while not game_over:
 
     for obs in obstacles:
 
-        if in_vertically(player.hitbox(), obs.hitbox):
-            if vertical_collusion(player.hitbox(), obs.hitbox) == obs.hitbox:
+        if functions.in_vertically(player.hitbox(), obs.hitbox):
+            if functions.vertical_collusion(player.hitbox(), obs.hitbox) == obs.hitbox:
                 if player.jumping:
                     player.change_y_movement(10)
-            elif vertical_collusion(player.hitbox(), obs.hitbox) == player.hitbox():
+            elif functions.vertical_collusion(player.hitbox(), obs.hitbox) == player.hitbox():
                 if not player.jumping or (player.jumping and player.current_speed() == 0):
                     player.change_y_movement(0)
                     player.falling = False
                     player.jumping = False
         else:
-            if horizontal_collusion(player.hitbox(), obs.hitbox) == obs.hitbox:
+            if functions.horizontal_collusion(player.hitbox(), obs.hitbox) == obs.hitbox:
                 player.can_move_left = False
                 if player.xv < 0:
                     player.xt = time.time()
                     player.x0 = player.pos[0]
-            if horizontal_collusion(player.hitbox(), obs.hitbox) == player.hitbox():
+            if functions.horizontal_collusion(player.hitbox(), obs.hitbox) == player.hitbox():
                 player.can_move_right = False
                 if player.xv > 0:
                     player.xt = time.time()
@@ -131,8 +92,8 @@ while not game_over:
         if (player.xv > 0 and player.can_move_right) or (player.xv < 0 and player.can_move_left):
             player.pos[0] = player.x0 + player.xv * player.x_dt()
 
-    if horizontal_collusion(player.hitbox(), paperwork.hitbox) != 0 and \
-        vertical_collusion(player.hitbox(), paperwork.hitbox) != 0:
+    if functions.horizontal_collusion(player.hitbox(), paperwork.hitbox) != 0 and \
+        functions.vertical_collusion(player.hitbox(), paperwork.hitbox) != 0:
         game_over = True
 
     player.draw()
