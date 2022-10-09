@@ -20,6 +20,8 @@ def open(levels):
     func.fade_out(dis)
     start_time = time.time()
 
+    level_boxes = [[5 + (i % 10) * 60, 150 + (i // 10) * 100, 50, 50] for i, level in enumerate(levels)]
+
     while not back:
 
         delta_start = time.time() - start_time
@@ -34,11 +36,7 @@ def open(levels):
         dis.blit(func.get_entry_text("Levels:", 50), [225, 20])
 
         for i, level in enumerate(levels):
-            rect = [5 + (i % 10) * 60, 150 + (i // 10) * 100, 50, 50]
-            if level:
-                pygame.draw.rect(dis, green, rect)
-            else:
-                pygame.draw.rect(dis, mid_gray, rect)
+            pygame.draw.rect(dis, green if level else mid_gray, level_boxes[i])
 
             if i < 9:
                 dis.blit(func.get_entry_text(str(i + 1), 30), [20 + (i % 10) * 60, 155 + (i // 10) * 100])
@@ -54,8 +52,11 @@ def open(levels):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x = pygame.mouse.get_pos()[0]
                 mouse_y = pygame.mouse.get_pos()[1]
-                if 170 <= mouse_x <= 430 and 470 <= mouse_y <= 520:
+                if func.mouse_in_box([170, 470, 260, 50]):
                     back = True
+                for i, level in enumerate(levels):
+                    if func.mouse_in_box(level_boxes[i]):
+                        levels[i] = True
 
         pygame.display.update()
 

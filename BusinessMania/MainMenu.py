@@ -139,15 +139,12 @@ while not game_over:
         if event.type == pygame.QUIT:
             game_over = True
         if event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_x = pygame.mouse.get_pos()[0]
-            mouse_y = pygame.mouse.get_pos()[1]
-            if 300 <= mouse_x <= 500:
-                if 150 <= mouse_y <= 200:
-                    levels = LevelsMenu.open(levels)
-                if 250 <= mouse_y <= 300:
-                    credits()
-                if 350 <= mouse_y <= 400:
-                    game_over = True
-                    func.fade_out(dis)
+            if func.mouse_in_box([300, 150, 200, 50]):
+                levels = LevelsMenu.open(levels)
+            if func.mouse_in_box([300, 250, 200, 50]):
+                credits()
+            if func.mouse_in_box([300, 350, 200, 50]):
+                game_over = True
+                func.fade_out(dis)
 
     pygame.display.update()
