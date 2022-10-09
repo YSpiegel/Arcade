@@ -4,21 +4,20 @@ import random
 import classes
 import functions
 
+
 dis = pygame.display.set_mode((600, 600))
 pygame.display.set_caption("BusinessMania by YS")
 dis.set_colorkey((255, 255, 255))
 black = (0, 0, 0)
 white = (255, 255, 255)
 light_gray = (235, 235, 235)
-light_blue = (200, 200, 255)
+mid_gray = (120, 120, 120)
+dark_gray = (50, 50, 50)
 pygame.font.init()
 
 obs_list = [[0, 580, 600, 20], [0, 0, 600, 20], [0, 0, 20, 600], [580, 0, 20, 600],
 
-            [280, 320, 40, 10], [310, 220, 10, 100], [280, 280, 10, 40], [220, 280, 60, 10], [170, 220, 10, 200],
-            [170, 420, 100, 10], [170, 220, 10, 200], [280, 380, 50, 10], [170, 220, 120, 10], [330, 380, 10, 50],
-            [330, 420, 50, 10], [380, 420, 10, 50], [380, 460, 50, 10], [430, 460, 10, 50], [430, 500, 50, 10],
-            [480, 500, 10, 50], [480, 540, 50, 10], [530, 540, 10, 50]]
+            [350, 550, 50, 50]]
 
 obstacles = [classes.obstacle(rect, dis) for rect in obs_list]
 
@@ -26,13 +25,25 @@ paperwork = classes.paperwork([550, 550], dis)
 
 
 def run_level(passed_before):
-    player = classes.player(dis)
+    player = classes.player(dis, [40, 500])
 
     game_over = False
 
     while not game_over:
 
         dis.fill(light_gray)
+
+        dis.blit(functions.get_entry_text("Use A and D to move to the sides         And W to jump", 15), [60, 400])
+        pygame.draw.rect(dis, mid_gray, [100, 430, 40, 40], width=3)
+        dis.blit(functions.get_entry_text("A", 30), [110, 430])
+        pygame.draw.polygon(dis, mid_gray, [[60, 450], [90, 430], [90, 470]])
+        pygame.draw.rect(dis, mid_gray, [210, 430, 40, 40], width=3)
+        dis.blit(functions.get_entry_text("D", 30), [220, 425])
+        pygame.draw.polygon(dis, mid_gray, [[290, 450], [260, 430], [260, 470]])
+        pygame.draw.rect(dis, mid_gray, [355, 470, 40, 40], width=3)
+        dis.blit(functions.get_entry_text("W", 30), [359, 470])
+        pygame.draw.polygon(dis, mid_gray, [[375, 430], [355, 460], [395, 460]])
+
 
         y_delta_time = player.y_dt() * 4
 

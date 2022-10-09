@@ -1,3 +1,4 @@
+import pygame
 
 def in_vertically(hitbox1, hitbox2):
     return hitbox2[0][0] - 5 <= hitbox1[0][0] < hitbox1[0][1] <= hitbox2[0][1] + 5
@@ -33,3 +34,14 @@ def horizontal_collusion(hitbox1, hitbox2):
         if hitbox2[0][0] <= hitbox1[0][0] <= hitbox2[0][1]:
             return hitbox2
     return 0
+
+
+def get_entry_text(msg, fontsize):
+    """
+    Forms a rendered version of a message
+    :param msg:
+    :param fontsize:
+    :return: None
+    """
+    textfont = pygame.font.SysFont('Comic Sans MS', fontsize)
+    return textfont.render(msg, False, (0, 0, 0))

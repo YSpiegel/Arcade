@@ -11,3 +11,7 @@ def vertical_collusion(hitbox1, hitbox2):
 
 def horizontal_collusion(hitbox1, hitbox2):
     return functions.horizontal_collusion(hitbox1, hitbox2)
+
+
+def get_entry_text(msg, fontsize):
+    return functions.get_entry_text(msg, fontsize)

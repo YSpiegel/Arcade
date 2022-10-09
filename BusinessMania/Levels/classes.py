@@ -8,8 +8,8 @@ light_blue = (200, 200, 255)
 
 
 class player:
-    def __init__(self, dis):
-        self.pos = [300, 200]
+    def __init__(self, dis, pos):
+        self.pos = pos
         self.xt = time.time()
         self.xv = 0
         self.x0 = self.pos[0]
