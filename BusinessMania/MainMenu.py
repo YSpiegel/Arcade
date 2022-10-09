@@ -26,6 +26,7 @@ def get_entry_text(msg, fontsize):
 game_over = False
 start_time = time.time()
 
+
 def fade_out():
     fade_start = time.time()
     fade_c = 235
@@ -35,6 +36,57 @@ def fade_out():
         fade_c = 235 * (1 - 2 * (time.time() - fade_start))
         bg_c = (fade_c, fade_c, fade_c)
         pygame.display.update()
+
+
+def draw_building():
+    pygame.draw.polygon(dis, black, [[100, 450], [200, 400], [200, 200], [100, 250]])
+    pygame.draw.polygon(dis, dark_gray if bg_color[0] > dark_gray[0] else bg_color,
+                        [[100, 450], [50, 400], [50, 200], [100, 250]])
+    pygame.draw.polygon(dis, mid_gray if bg_color[0] > mid_gray[0] else bg_color,
+                        [[50, 200], [100, 250], [200, 200], [150, 150]])
+    pygame.draw.polygon(dis, bg_color, [[150, 425], [150, 400], [170, 390], [170, 415]])
+    for x in range(3):
+        for y in range(260, 400, 30):
+            pygame.draw.polygon(dis, bg_color, [[112 + 35 * x, y - 17 * x], [112 + 35 * x, y + 15 - 17 * x],
+                                                [122 + 35 * x, y - 17 * x + 10], [122 + 35 * x, y - 5 - 17 * x]])
+
+
+def credits():
+    fade_out()
+
+    texts = [get_entry_text("All rights reserved", 30), get_entry_text("Levels: Yoav Spiegel", 30),
+             get_entry_text("Screens: Yoav Spiegel", 30), get_entry_text("Creative: Yoav Spiegel", 30),
+             get_entry_text("Design: Yoav Spiegel", 30), get_entry_text("Coding: Yoav Spiegel", 30),
+             get_entry_text("Director: Yoav Spiegel", 30)]
+
+
+    # fade in
+    fade_start = time.time()
+    fade_c = 235
+    bg_c = (fade_c, fade_c, fade_c)
+    while time.time() - fade_start < 0.5:
+        dis.fill(bg_c)
+        draw_building()
+        fade_c = 235 * 2 * (time.time() - fade_start)
+        bg_c = (fade_c, fade_c, fade_c)
+        pygame.display.update()
+
+    cred_start = time.time()
+    cred_pos = -775
+    while cred_pos < 600:
+        dis.fill(bg_c)
+
+        draw_building()
+
+        for i, text in enumerate(texts):
+            dis.blit(text, [250, cred_pos + 120 * i])
+
+        delta_cred = time.time() - cred_start
+        cred_pos += delta_cred / 40
+
+        pygame.display.update()
+
+    fade_out()
 
 
 class character:
@@ -71,16 +123,7 @@ while not game_over:
     dis.blit(get_entry_text("By Yoav Spiegel", 20), [440, 65])
 
     # draw building
-    pygame.draw.polygon(dis, black, [[100, 450], [200, 400], [200, 200], [100, 250]])
-    pygame.draw.polygon(dis, dark_gray if bg_color[0] > dark_gray[0] else bg_color,
-                        [[100, 450], [50, 400], [50, 200], [100, 250]])
-    pygame.draw.polygon(dis, mid_gray if bg_color[0] > mid_gray[0] else bg_color,
-                        [[50, 200], [100, 250], [200, 200], [150, 150]])
-    pygame.draw.polygon(dis, bg_color, [[150, 425], [150, 400], [170, 390], [170, 415]])
-    for x in range(3):
-        for y in range(260, 400, 30):
-            pygame.draw.polygon(dis, bg_color, [[112 + 35 * x, y - 17 * x], [112 + 35 * x, y + 15 - 17 * x],
-                                                  [122 + 35 * x, y - 17 * x + 10], [122 + 35 * x, y - 5 - 17 * x]])
+    draw_building()
 
     # draw characters
 
@@ -113,6 +156,8 @@ while not game_over:
             mouse_x = pygame.mouse.get_pos()[0]
             mouse_y = pygame.mouse.get_pos()[1]
             if 300 <= mouse_x <= 500:
+                if 250 <= mouse_y <= 300:
+                    credits()
                 if 350 <= mouse_y <= 400:
                     game_over = True
                     fade_out()
