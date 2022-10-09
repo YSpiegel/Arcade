@@ -1,7 +1,7 @@
 import pygame
 import time
 import random
-import func
+import lib
 import LevelsMenu
 
 dis = pygame.display.set_mode((600, 600))
@@ -32,12 +32,12 @@ def draw_building():
 
 
 def credits():
-    func.fade_out(dis)
+    lib.fade_out(dis)
 
-    texts = [func.get_entry_text("All rights reserved", 30), func.get_entry_text("Levels: Yoav Spiegel", 30),
-             func.get_entry_text("Screens: Yoav Spiegel", 30), func.get_entry_text("Creative: Yoav Spiegel", 30),
-             func.get_entry_text("Design: Yoav Spiegel", 30), func.get_entry_text("Coding: Yoav Spiegel", 30),
-             func.get_entry_text("Director: Yoav Spiegel", 30)]
+    texts = [lib.get_entry_text("All rights reserved", 30), lib.get_entry_text("Levels: Yoav Spiegel", 30),
+             lib.get_entry_text("Screens: Yoav Spiegel", 30), lib.get_entry_text("Creative: Yoav Spiegel", 30),
+             lib.get_entry_text("Design: Yoav Spiegel", 30), lib.get_entry_text("Coding: Yoav Spiegel", 30),
+             lib.get_entry_text("Director: Yoav Spiegel", 30)]
 
 
     # fade in
@@ -70,7 +70,7 @@ def credits():
             if event.type == pygame.QUIT:
                 cred_pos = 600
 
-    func.fade_out(dis)
+    lib.fade_out(dis)
 
 
 class character:
@@ -105,8 +105,8 @@ while not game_over:
         bg_color = light_gray
     dis.fill(bg_color)
 
-    dis.blit(func.get_entry_text("BusinessMania!", 60), [20, 20])
-    dis.blit(func.get_entry_text("By Yoav Spiegel", 20), [440, 65])
+    dis.blit(lib.get_entry_text("BusinessMania!", 60), [20, 20])
+    dis.blit(lib.get_entry_text("By Yoav Spiegel", 20), [440, 65])
 
     # draw building
     draw_building()
@@ -129,22 +129,22 @@ while not game_over:
     # draw buttons
 
     pygame.draw.rect(dis, black, [300, 150, 200, 50], width=4)
-    dis.blit(func.get_entry_text("Play", 35), [370, 150])
+    dis.blit(lib.get_entry_text("Play", 35), [370, 150])
     pygame.draw.rect(dis, black, [300, 250, 200, 50], width=4)
-    dis.blit(func.get_entry_text("Credits", 35), [340, 250])
+    dis.blit(lib.get_entry_text("Credits", 35), [340, 250])
     pygame.draw.rect(dis, black, [300, 350, 200, 50], width=4)
-    dis.blit(func.get_entry_text("Quit", 35), [360, 350])
+    dis.blit(lib.get_entry_text("Quit", 35), [360, 350])
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             game_over = True
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if func.mouse_in_box([300, 150, 200, 50]):
+            if lib.mouse_in_box([300, 150, 200, 50]):
                 levels = LevelsMenu.open(levels)
-            if func.mouse_in_box([300, 250, 200, 50]):
+            if lib.mouse_in_box([300, 250, 200, 50]):
                 credits()
-            if func.mouse_in_box([300, 350, 200, 50]):
+            if lib.mouse_in_box([300, 350, 200, 50]):
                 game_over = True
-                func.fade_out(dis)
+                lib.fade_out(dis)
 
     pygame.display.update()

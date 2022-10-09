@@ -1,6 +1,7 @@
 import pygame
 import time
 import random
+import classes
 
 dis = pygame.display.set_mode((600, 600))
 pygame.display.set_caption("ControllerGame by YS")
@@ -8,72 +9,10 @@ dis.set_colorkey((255, 255, 255))
 black = (0, 0, 0)
 white = (255, 255, 255)
 light_gray = (235, 235, 235)
+light_blue = (200, 200, 255)
 pygame.font.init()
 
 game_over = False
-
-
-class player:
-    def __init__(self):
-        self.pos = [300, 200]
-        self.xt = time.time()
-        self.xv = 0
-        self.x0 = self.pos[0]
-        self.yt = time.time()
-        self.yv0 = 0
-        self.ya = 100
-        self.y0 = self.pos[1]
-
-        self.falling = True
-        self.jumping = False
-        self.can_move_right = True
-        self.can_move_left = True
-
-    def change_x_movement(self, xv_mod):
-        self.xv = xv_mod
-        self.xt = time.time()
-        self.x0 = self.pos[0]
-
-    def change_y_movement(self, yv0_mod):
-        self.yv0 = yv0_mod
-        self.ya = 100
-        self.yt = time.time()
-        self.y0 = self.pos[1]
-
-    def hitbox(self):
-        return [[self.pos[0] - 5, self.pos[0] + 5], [self.pos[1] - 5, self.pos[1] + 20]]
-
-    def x_dt(self):
-        return time.time() - self.xt
-
-    def y_dt(self):
-        return time.time() - self.yt
-
-    def draw(self):
-        pygame.draw.circle(dis, black, self.pos, 5)
-        pygame.draw.rect(dis, black, [self.pos[0] - 3, self.pos[1] + 5, 6, 15])
-        pygame.draw.polygon(dis, white, [[self.pos[0] - 3, self.pos[1] + 6], [self.pos[0] + 3, self.pos[1] + 6],
-                                         [self.pos[0], self.pos[1] + 10]])
-        pygame.draw.rect(dis, black, [self.pos[0] - 5, self.pos[1] - 5, 10, 2])
-        pygame.draw.circle(dis,black, [self.pos[0], self.pos[1] - 5], 3)
-
-    def current_speed(self):
-        return self.yv0 + self.y_dt() * self.ya * 4
-
-
-class obstacle:
-    # def __init__(self, pos, length, height):
-    #     self.pos = pos
-    #     self.hitbox = [[pos[0], pos[0] + length], [pos[1], pos[1] + height]]
-    #     self.length = length
-    #     self.height = height
-
-    def __init__(self, rect):
-        self.rect = rect
-        self.hitbox = [[rect[0], rect[0] + rect[2]], [rect[1], rect[1] + rect[3]]]
-
-    def draw(self):
-        pygame.draw.rect(dis, black, self.rect)
 
 
 def in_vertically(hitbox1, hitbox2):
@@ -112,15 +51,24 @@ def horizontal_collusion(hitbox1, hitbox2):
     return 0
 
 
-player = player()
+player = classes.player(dis)
 
-obstacles = [obstacle([0, 580, 600, 20]), obstacle([0, 0, 600, 20]),
-             obstacle([0, 0, 20, 600]), obstacle([580, 0, 20, 600]),
+obstacles = [classes.obstacle([0, 580, 600, 20], dis), classes.obstacle([0, 0, 600, 20], dis),
+             classes.obstacle([0, 0, 20, 600], dis), classes.obstacle([580, 0, 20, 600], dis),
 
-             obstacle([280, 320, 40, 10]), obstacle([310, 220, 10, 100]),
-             obstacle([280, 280, 10, 40]), obstacle([200, 280, 80, 10])]
+             classes.obstacle([280, 320, 40, 10], dis), classes.obstacle([310, 220, 10, 100], dis),
+             classes.obstacle([280, 280, 10, 40], dis), classes.obstacle([220, 280, 60, 10], dis),
+             classes.obstacle([170, 220, 10, 200], dis), classes.obstacle([170, 420, 100, 10], dis),
+             classes.obstacle([270, 380, 10, 50], dis), classes.obstacle([280, 380, 50, 10], dis),
+             classes.obstacle([170, 220, 120, 10], dis), classes.obstacle([330, 380, 10, 50], dis),
+             classes.obstacle([330, 420, 50, 10], dis), classes.obstacle([380, 420, 10, 50], dis),
+             classes.obstacle([380, 460, 50, 10], dis), classes.obstacle([430, 460, 10, 50], dis),
+             classes.obstacle([430, 500, 50, 10], dis), classes.obstacle([480, 500, 10, 50], dis),
+             classes.obstacle([480, 540, 50, 10], dis), classes.obstacle([530, 540, 10, 50], dis)]
 
 program_start = time.time()
+
+paperwork = classes.paperwork([550, 550], dis)
 
 while not game_over:
 
@@ -183,7 +131,13 @@ while not game_over:
         if (player.xv > 0 and player.can_move_right) or (player.xv < 0 and player.can_move_left):
             player.pos[0] = player.x0 + player.xv * player.x_dt()
 
+    if horizontal_collusion(player.hitbox(), paperwork.hitbox) != 0 and \
+        vertical_collusion(player.hitbox(), paperwork.hitbox) != 0:
+        game_over = True
+
     player.draw()
     for obs in obstacles:
         obs.draw()
+    paperwork.draw()
+
     pygame.display.update()
