@@ -1,6 +1,8 @@
 import pygame
 import time
 import random
+import func
+import LevelsMenu
 
 dis = pygame.display.set_mode((600, 600))
 pygame.display.set_caption("BusinessMania by YoavSpiegel")
@@ -12,30 +14,8 @@ mid_gray = (120, 120, 120)
 dark_gray = (50, 50, 50)
 
 
-def get_entry_text(msg, fontsize):
-    """
-    Forms a rendered version of a message
-    :param msg:
-    :param fontsize:
-    :return: None
-    """
-    textfont = pygame.font.SysFont('Comic Sans MS', fontsize)
-    return textfont.render(msg, False, (0, 0, 0))
-
-
 game_over = False
 start_time = time.time()
-
-
-def fade_out():
-    fade_start = time.time()
-    fade_c = 235
-    bg_c = (fade_c, fade_c, fade_c)
-    while time.time() - fade_start < 0.5:
-        dis.fill(bg_c)
-        fade_c = 235 * (1 - 2 * (time.time() - fade_start))
-        bg_c = (fade_c, fade_c, fade_c)
-        pygame.display.update()
 
 
 def draw_building():
@@ -52,12 +32,12 @@ def draw_building():
 
 
 def credits():
-    fade_out()
+    func.fade_out(dis)
 
-    texts = [get_entry_text("All rights reserved", 30), get_entry_text("Levels: Yoav Spiegel", 30),
-             get_entry_text("Screens: Yoav Spiegel", 30), get_entry_text("Creative: Yoav Spiegel", 30),
-             get_entry_text("Design: Yoav Spiegel", 30), get_entry_text("Coding: Yoav Spiegel", 30),
-             get_entry_text("Director: Yoav Spiegel", 30)]
+    texts = [func.get_entry_text("All rights reserved", 30), func.get_entry_text("Levels: Yoav Spiegel", 30),
+             func.get_entry_text("Screens: Yoav Spiegel", 30), func.get_entry_text("Creative: Yoav Spiegel", 30),
+             func.get_entry_text("Design: Yoav Spiegel", 30), func.get_entry_text("Coding: Yoav Spiegel", 30),
+             func.get_entry_text("Director: Yoav Spiegel", 30)]
 
 
     # fade in
@@ -86,7 +66,11 @@ def credits():
 
         pygame.display.update()
 
-    fade_out()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                cred_pos = 600
+
+    func.fade_out(dis)
 
 
 class character:
@@ -109,6 +93,8 @@ characters = [character([300 + 290 * (random.randrange(1, 4, 2) - 2), y + 5 * (r
               for y in range(480, 580, 5)]
 char_update = time.time()
 
+levels = [False for _ in range(30)]
+
 while not game_over:
     delta_start = time.time() - start_time
     fade_color = 235 * delta_start
@@ -119,8 +105,8 @@ while not game_over:
         bg_color = light_gray
     dis.fill(bg_color)
 
-    dis.blit(get_entry_text("BusinessMania!", 60), [20, 20])
-    dis.blit(get_entry_text("By Yoav Spiegel", 20), [440, 65])
+    dis.blit(func.get_entry_text("BusinessMania!", 60), [20, 20])
+    dis.blit(func.get_entry_text("By Yoav Spiegel", 20), [440, 65])
 
     # draw building
     draw_building()
@@ -143,11 +129,11 @@ while not game_over:
     # draw buttons
 
     pygame.draw.rect(dis, black, [300, 150, 200, 50], width=4)
-    dis.blit(get_entry_text("Play", 35), [370, 150])
+    dis.blit(func.get_entry_text("Play", 35), [370, 150])
     pygame.draw.rect(dis, black, [300, 250, 200, 50], width=4)
-    dis.blit(get_entry_text("Credits", 35), [340, 250])
+    dis.blit(func.get_entry_text("Credits", 35), [340, 250])
     pygame.draw.rect(dis, black, [300, 350, 200, 50], width=4)
-    dis.blit(get_entry_text("Quit", 35), [360, 350])
+    dis.blit(func.get_entry_text("Quit", 35), [360, 350])
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -156,10 +142,12 @@ while not game_over:
             mouse_x = pygame.mouse.get_pos()[0]
             mouse_y = pygame.mouse.get_pos()[1]
             if 300 <= mouse_x <= 500:
+                if 150 <= mouse_y <= 200:
+                    levels = LevelsMenu.open(levels)
                 if 250 <= mouse_y <= 300:
                     credits()
                 if 350 <= mouse_y <= 400:
                     game_over = True
-                    fade_out()
+                    func.fade_out(dis)
 
     pygame.display.update()
