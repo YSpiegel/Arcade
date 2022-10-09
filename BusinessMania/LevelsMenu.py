@@ -24,6 +24,7 @@ def open(levels):
     level_boxes = [[5 + (i % 10) * 60, 150 + (i // 10) * 100, 50, 50] for i, level in enumerate(levels)]
 
     while not back:
+        playable = [levels[:i].count(True) > i - 3 if i >= 3 else True for i, level in enumerate(levels)]
 
         delta_start = time.time() - start_time
         fade_color = 235 * delta_start
@@ -44,6 +45,10 @@ def open(levels):
             else:
                 dis.blit(lib.get_entry_text(str(i + 1), 30), [12 + (i % 10) * 60, 155 + (i // 10) * 100])
 
+            if not playable[i]:
+                pygame.draw.line(dis, black, [level_boxes[i][0], level_boxes[i][1]],
+                                 [level_boxes[i][0] + level_boxes[i][2], level_boxes[i][1] + level_boxes[i][3]])
+
         pygame.draw.rect(dis, black, [170, 470, 260, 50], width=4)
         dis.blit(lib.get_entry_text("Back to main menu", 25), [190, 475])
 
@@ -51,15 +56,14 @@ def open(levels):
             if event.type == pygame.QUIT:
                 back = True
             if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_x = pygame.mouse.get_pos()[0]
-                mouse_y = pygame.mouse.get_pos()[1]
                 if lib.mouse_in_box([170, 470, 260, 50]):
                     back = True
                 for i, level in enumerate(levels):
-                    if i == 0 and lib.mouse_in_box(level_boxes[i]):
-                        levels[i] = Level1.run_level(level)
-                    elif i == 1 and lib.mouse_in_box(level_boxes[i]):
-                        levels[i] = Level2.run_level(level)
+                    if playable[i]:
+                        if i == 0 and lib.mouse_in_box(level_boxes[i]):
+                            levels[i] = Level1.run_level(level)
+                        elif i == 1 and lib.mouse_in_box(level_boxes[i]):
+                            levels[i] = Level2.run_level(level)
 
         pygame.display.update()
 
