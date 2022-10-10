@@ -1,7 +1,7 @@
 import pygame
 import time
 import lib
-from Levels import Level1, Level2
+from Levels import Lvl1, Lvl2, Lvl3
 
 dis = pygame.display.set_mode((600, 600))
 pygame.display.set_caption("BusinessMania by YoavSpiegel")
@@ -59,11 +59,13 @@ def open(levels):
                 if lib.mouse_in_box([170, 470, 260, 50]):
                     back = True
                 for i, level in enumerate(levels):
-                    if playable[i]:
-                        if i == 0 and lib.mouse_in_box(level_boxes[i]):
-                            levels[i] = Level1.run_level(level)
-                        elif i == 1 and lib.mouse_in_box(level_boxes[i]):
-                            levels[i] = Level2.run_level(level)
+                    if playable[i] and lib.mouse_in_box(level_boxes[i]):
+                        if i == 0:
+                            levels[i] = Lvl1.run_level(level)
+                        elif i == 1:
+                            levels[i] = Lvl2.run_level(level)
+                        elif i == 2:
+                            levels[i] = Lvl3.run_level(level)
 
         pygame.display.update()
 
