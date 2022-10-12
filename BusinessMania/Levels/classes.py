@@ -6,7 +6,7 @@ import math
 black = (0, 0, 0)
 white = (255, 255, 255)
 light_gray = (235, 235, 235)
-light_blue = (200, 200, 255)
+light_blue = (150, 150, 255)
 
 
 class player:
