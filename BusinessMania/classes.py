@@ -18,3 +18,7 @@ class obstacle(classes.obstacle):
 
 class paperwork(classes.paperwork):
     pass
+
+
+class trampoline(classes.trampoline):
+    pass
