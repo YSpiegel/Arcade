@@ -45,3 +45,9 @@ def get_entry_text(msg, fontsize):
     """
     textfont = pygame.font.SysFont('Comic Sans MS', fontsize)
     return textfont.render(msg, False, (0, 0, 0))
+
+
+def mouse_in_box(box):
+    mouse_x = pygame.mouse.get_pos()[0]
+    mouse_y = pygame.mouse.get_pos()[1]
+    return box[0] <= mouse_x <= box[0] + box[2] and box[1] <= mouse_y <= box[1] + box[3]

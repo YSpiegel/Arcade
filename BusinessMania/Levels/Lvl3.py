@@ -69,7 +69,8 @@ def run_level(passed_before):
             if event.type == pygame.QUIT:
                 game_over = True
             if event.type == pygame.MOUSEBUTTONDOWN:
-                print(player.pos)
+                if functions.mouse_in_box([510, 30, 60, 30]):
+                    return run_level(passed_before)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w and not player.falling:
                     player.jumping = True
@@ -103,6 +104,9 @@ def run_level(passed_before):
         for obs in obstacles:
             obs.draw()
         paperwork.draw()
+
+        pygame.draw.rect(dis, black, [510, 30, 60, 30], width=3)
+        dis.blit(functions.get_entry_text("Restart", 14), [515, 35])
 
         pygame.display.update()
     return passed_before
