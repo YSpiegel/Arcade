@@ -1,7 +1,7 @@
 import pygame
 import time
 import lib
-from Levels import Lvl1, Lvl2, Lvl3, Lvl4
+from Levels import Lvl1, Lvl2, Lvl3, Lvl4, Lvl5
 
 dis = pygame.display.set_mode((600, 600))
 pygame.display.set_caption("BusinessMania by YoavSpiegel")
@@ -23,7 +23,7 @@ def open(levels):
 
     level_boxes = [[5 + (i % 10) * 60, 150 + (i // 10) * 100, 50, 50] for i, level in enumerate(levels)]
 
-    level_code = {1: Lvl1, 2: Lvl2, 3: Lvl3, 4: Lvl4}
+    level_code = {1: Lvl1, 2: Lvl2, 3: Lvl3, 4: Lvl4, 5: Lvl5}
 
     while not back:
         playable = [levels[:i].count(True) > i - 3 if i >= 3 else True for i, level in enumerate(levels)]
