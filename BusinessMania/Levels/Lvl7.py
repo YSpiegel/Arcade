@@ -136,7 +136,7 @@ def run_level(passed_before):
         dis.blit(functions.get_entry_text("Restart", 14), [515, 35])
 
         dis.blit(functions.get_entry_text("Introducing: Trampolines!", 40), [40, 150])
-        dis.blit(functions.get_entry_text("Jump on them to get to higher unreachable places, ", 20), [40, 210])
+        dis.blit(functions.get_entry_text("Jump on them to reach higher unreachable places, ", 20), [40, 210])
         dis.blit(functions.get_entry_text("to infinity and beyond!", 30), [40, 250])
 
         pygame.display.update()
