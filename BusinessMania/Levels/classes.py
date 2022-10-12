@@ -37,7 +37,7 @@ class player:
         self.y0 = self.pos[1]
 
     def hitbox(self):
-        return [[self.pos[0] - 5, self.pos[0] + 5], [self.pos[1] - 5, self.pos[1] + 20]]
+        return [[self.pos[0] - 2, self.pos[0] + 5], [self.pos[1] - 2, self.pos[1] + 20]]
 
     def x_dt(self):
         return time.time() - self.xt
