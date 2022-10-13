@@ -16,11 +16,13 @@ pygame.font.init()
 
 obs_list = [[0, 580, 600, 20], [0, 0, 600, 20], [0, 0, 20, 600], [580, 0, 20, 600],
 
-            [120, 450, 10, 150], [220, 450, 10, 150], [320, 450, 10, 150], [420, 450, 10, 150], [520, 450, 10, 150]]
+            [250, 350, 100, 10], [250, 250, 10, 100], [250, 250, 150, 10], [300, 300, 50, 10], [340, 300, 10, 50],
+            [400, 250, 10, 160], [200, 400, 200, 10], [180, 180, 10, 230], [190, 180, 270, 10], [460, 100, 10, 370],
+            [100, 460, 370, 10], [100, 100, 10, 370], [100, 100, 180, 10], [320, 100, 140, 10], [470, 300, 150, 10]]
 
-paperwork = classes.paperwork([545, 500], dis)
+paperwork = classes.paperwork([515, 250], dis)
 
-trampoline_list = [[55, 530, 30, 10], [160, 530, 30, 10], [260, 530, 30, 10], [360, 530, 30, 10], [460, 530, 30, 10]]
+trampoline_list = [[200, 390, 20, 10], [120, 450, 20, 10], [150, 300, 20, 10], [280, 150, 40, 10]]
 
 trampolines = [classes.trampoline(rect, dis) for rect in trampoline_list]
 
@@ -30,7 +32,7 @@ obstacles = [classes.obstacle(rect, dis) for rect in obs_list]
 
 
 def run_level(passed_before):
-    player = classes.player(dis, [70, 40])
+    player = classes.player(dis, [310, 320])
 
     game_over = False
 
